@@ -47,3 +47,22 @@ class ToOllamaRepositoryImpl(ToOllamaRepository):
             shell=True,
         ).wait()
 
+    def make_modelfile(self, model_path):
+        template = (
+            f'FROM {glob(f"{model_path}/*.gguf")[0].split("/")[-1]}\n'
+            'TEMPLATE """{{ if .System }}<|start_header_id|>system<|end_header_id|>\n'
+            "{{ .System }}<|eot_id|>{{ end }}{{ if .Prompt }}<|start_header_id|>user<|end_header_id|>\n"
+            "{{ .Prompt }}<|eot_id|>{{ end }}<|start_header_id|>assistant<|end_header_id|>\n"
+            '{{ .Response }}<|eot_id|>"""\n'
+            'PARAMETER stop "<|start_header_id|>"\n'
+            'PARAMETER stop "<|end_header_id|>"\n'
+            'PARAMETER stop "<|eot_id|>"\n'
+            'PARAMETER stop "<|reserved_special_token"'
+        )
+        with open(f"{model_path}/Modelfile", "w") as f:
+            f.write(template)
+
+    def to_ollama(self, model_path):
+        model_name = model_path.split('/')[-1]
+        modelfile = glob(f"{model_path}/Modelfile")[0]
+        subprocess.Popen(f"ollama create {model_name} -f {modelfile}", shell=True).wait()

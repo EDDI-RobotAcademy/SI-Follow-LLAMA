@@ -18,3 +18,9 @@ class ToOllamaServiceImpl(ToOllamaService):
             cls.__instance = cls()
 
         return cls.__instance
+    
+    def to_ollama(self, base_model_id, adapter_model_id, model_path):
+        self.__to_ollama_repository.merge_adapter(base_model_id, adapter_model_id, model_path)
+        self.__to_ollama_repository.to_gguf(model_path)
+        self.__to_ollama_repository.make_modelfile(model_path)
+        self.__to_ollama_repository.to_ollama(model_path)

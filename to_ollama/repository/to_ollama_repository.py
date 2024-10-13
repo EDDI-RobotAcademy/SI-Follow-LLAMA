@@ -10,3 +10,12 @@ class ToOllamaRepository(ABC):
     def to_gguf(self, base_model_id, adapter_model_id):
         pass
     
+    @abstractmethod
+    def make_modelfile(self, model_path):
+        pass
+    
+    @abstractmethod
+    def to_ollama(self, model_path):
+        pass
+    
+    
