@@ -10,6 +10,9 @@ class TrainRepository(ABC):
     def load_tokenizer(self, model_id):
         pass
 
+    @abstractmethod
+    def get_quantization_config(self, quantize_config):
+        pass
 
     @abstractmethod
     def get_lora_target(self, lora_target_config):

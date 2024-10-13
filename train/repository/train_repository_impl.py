@@ -9,6 +9,8 @@ from transformers import (
     Trainer,
     TrainingArguments,
 )
+
+from train.entity.configs.quantize_args import QuantizeArgs
 from train.repository.train_repository import TrainRepository
 
 
@@ -56,6 +58,13 @@ class TrainRepositoryImpl(TrainRepository):
         tokenizer.padding_side = "right"
         return tokenizer
 
+    def get_quantization_config(self, quantize_config):
+        quantize_config = BitsAndBytesConfig(
+            load_in_4bit=quantize_config.load_in_4bit,
+            bnb_4bit_quant_type=quantize_config.bnb_4bit_quant_type,
+            bnb_4bit_compute_dtype=quantize_config.bnb_4bit_compute_dtype,
+        )
+        return quantize_config
 
     def get_lora_target(self, lora_target_config):
         return lora_target_config.targets
