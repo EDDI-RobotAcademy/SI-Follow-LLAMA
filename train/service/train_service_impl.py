@@ -39,3 +39,14 @@ class TrainServiceImpl(TrainService):
 
         model = get_peft_model(model, lora_config)
         model.print_trainable_parameters()
+
+        dataset = self.__dataset_repository.load_dataset(self.DATASET_ID, tokenizer)
+        train_dataset = dataset
+        eval_dataset = dataset
+        # train_dataset = dataset
+        # eval_dataset = None
+        data_collator = self.__dataset_repository.get_data_collator(tokenizer)
+
+        # TODO
+        callbacks = None
+
