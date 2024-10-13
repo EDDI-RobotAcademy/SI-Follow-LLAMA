@@ -1,4 +1,6 @@
 from peft import get_peft_model
+
+from dataset.repository.dataset_repository_impl import DatasetRepositoryImpl
 from train.entity.configs.lora.lora_args import LoraArgs
 from train.entity.configs.lora.lora_target import LoraTragets
 from train.entity.configs.model_args import ModelCofig
@@ -6,14 +8,18 @@ from train.entity.configs.quantize_args import QuantizeArgs
 from train.entity.configs.trainer_args import TrainerArgs
 from train.repository.train_repository_impl import TrainRepositoryImpl
 from train.service.train_service import TrainService
+
+
 class TrainServiceImpl(TrainService):
     MODEL_ID = "meta-llama/Llama-3.2-1B-Instruct"
+    DATASET_ID = "OneBottleKick/si-follow-dummy"
     __instance = None
 
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
             cls.__instance.__train_repository = TrainRepositoryImpl.get_instance()
+            cls.__instance.__dataset_repository = DatasetRepositoryImpl.get_instance()
 
         return cls.__instance
 
@@ -50,3 +56,16 @@ class TrainServiceImpl(TrainService):
         # TODO
         callbacks = None
 
+        train_args = self.__train_repository.get_train_args(TrainerArgs())
+        trainer = self.__train_repository.get_trainer(
+            model,
+            tokenizer,
+            train_args,
+            train_dataset,
+            eval_dataset,
+            callbacks,
+            data_collator,
+        )
+
+        self.__train_repository.train(trainer)
+        self.__train_repository.save_model(model, save_path)

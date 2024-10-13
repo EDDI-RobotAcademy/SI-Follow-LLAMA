@@ -1,6 +1,7 @@
 from datasets import load_dataset, concatenate_datasets
 import torch
 
+from dataset.entity.data_collator import DataCollatorForSupervisedDataset
 from dataset.repository.dataset_repository import DatasetRepository
 
 
@@ -73,3 +74,6 @@ class DatasetRepositoryImpl(DatasetRepository):
         all_datasets = concatenate_datasets(all_datasets)
         return all_datasets
     
+    def get_data_collator(self, tokenizer):
+        collator = DataCollatorForSupervisedDataset(tokenizer)
+        return collator

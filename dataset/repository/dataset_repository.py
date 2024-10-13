@@ -6,3 +6,6 @@ class DatasetRepository(ABC):
     def load_dataset(self, dataset_id, tokenizer):
         pass
     
+    @abstractmethod
+    def get_data_collator(self, tokenizer):
+        pass

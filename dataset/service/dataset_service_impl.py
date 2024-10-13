@@ -22,3 +22,7 @@ class DatasetServiceImpl(DatasetService):
     def tokenize_dataset(self, dataset_id, tokenizer):
         dataset = self.__dataset_repository.tokenize_dataset(dataset_id, tokenizer)
         return dataset
+    
+    def get_data_collator(self, tokenizer):
+        collator = self.__dataset_repository.get_data_collator(tokenizer)
+        return collator
