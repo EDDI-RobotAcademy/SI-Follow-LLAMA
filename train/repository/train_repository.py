@@ -51,3 +51,10 @@ class TrainRepository(ABC):
     def save_model(self, model, save_path):
         pass
 
+    @abstractmethod
+    def model_to_huggingface(self, model, model_id):
+        pass
+
+    @abstractmethod
+    def tokenizer_to_huggingface(self, tokenizer, model_id):
+        pass

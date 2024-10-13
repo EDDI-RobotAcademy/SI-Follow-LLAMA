@@ -137,3 +137,8 @@ class TrainRepositoryImpl(TrainRepository):
     def save_model(self, model, save_path):
         model.save_pretrained(save_path, from_pt=True)
 
+    def model_to_huggingface(self, model, model_id):
+        model.push_to_hub(model_id)
+
+    def tokenizer_to_huggingface(self, tokenizer, model_id):
+        tokenizer.push_to_hub(model_id)

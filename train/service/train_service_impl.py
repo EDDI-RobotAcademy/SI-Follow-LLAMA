@@ -69,3 +69,5 @@ class TrainServiceImpl(TrainService):
 
         self.__train_repository.train(trainer)
         self.__train_repository.save_model(model, save_path)
+        # self.__train_repository.model_to_huggingface(model, model_id)
+        # self.__train_repository.tokenizer_to_huggingface(model, model_id)
