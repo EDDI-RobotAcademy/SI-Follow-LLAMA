@@ -1,0 +1,5 @@
+__pycache__/
+*.gguf
+finetuned_models/
+wandb/
+model_zoo/
