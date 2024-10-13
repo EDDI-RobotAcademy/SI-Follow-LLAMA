@@ -1,4 +1,5 @@
 from train.entity.configs.model_args import ModelCofig
+from train.entity.configs.trainer_args import TrainerArgs
 from train.repository.train_repository_impl import TrainRepositoryImpl
 from train.service.train_service import TrainService
 class TrainServiceImpl(TrainService):
@@ -27,3 +28,10 @@ class TrainServiceImpl(TrainService):
         model = self.__train_repository.load_model(
             self.MODEL_ID, ModelCofig(), quantize_config
         )
+        tokenizer = self.__train_repository.load_tokenizer(self.MODEL_ID)
+
+        lora_targets = self.__train_repository.get_lora_target(LoraTragets())
+        lora_config = self.__train_repository.get_lora_config(LoraArgs(), lora_targets)
+
+        model = get_peft_model(model, lora_config)
+        model.print_trainable_parameters()

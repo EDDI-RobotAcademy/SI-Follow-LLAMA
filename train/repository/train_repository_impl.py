@@ -1,6 +1,7 @@
 from typing import List, Optional
 
 import torch
+from peft import LoraConfig, TaskType, prepare_model_for_kbit_training
 from transformers import (
     AutoModelForCausalLM,
     AutoTokenizer,
@@ -55,6 +56,21 @@ class TrainRepositoryImpl(TrainRepository):
         tokenizer.padding_side = "right"
         return tokenizer
 
+
+    def get_lora_target(self, lora_target_config):
+        return lora_target_config.targets
+
+    def get_lora_config(self, lora_config, lora_targets: List):
+        lora_config = LoraConfig(
+            task_type=TaskType.CAUSAL_LM,
+            inference_mode=False,
+            r=lora_config.r,
+            lora_alpha=lora_config.alpha,
+            lora_dropout=lora_config.dropout,
+            target_modules=lora_targets,
+            bias="none",
+        )
+        return lora_config
 
     def get_device(self):
         device = "cpu"

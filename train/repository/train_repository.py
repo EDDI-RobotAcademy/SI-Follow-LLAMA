@@ -12,6 +12,14 @@ class TrainRepository(ABC):
 
 
     @abstractmethod
+    def get_lora_target(self, lora_target_config):
+        pass
+
+    @abstractmethod
+    def get_lora_config(self, lora_config):
+        pass
+
+    @abstractmethod
     def get_device(self, **kwargs):
         pass
 
