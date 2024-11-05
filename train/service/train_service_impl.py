@@ -32,7 +32,14 @@ class TrainServiceImpl(TrainService):
 
         return cls.__instance
 
-    def sft(self, save_path, model_id: Optional[str] = None, dataset_id: Optional[str] = None, to_hub: bool = False):
+    def sft(
+        self,
+        save_path,
+        model_id: Optional[str] = None,
+        dataset_id: Optional[str] = None,
+        to_hub: bool = False,
+        report_to: str = "tensorboard",
+    ):
         quantize_config = self.__train_repository.get_quantization_config(
             QuantizeArgs()
         )
@@ -58,7 +65,7 @@ class TrainServiceImpl(TrainService):
         # TODO
         callbacks = None
 
-        train_args = self.__train_repository.get_train_args(TrainerArgs())
+        train_args = self.__train_repository.get_train_args(TrainerArgs(report_to=report_to))
         trainer = self.__train_repository.get_trainer(
             model,
             tokenizer,
@@ -71,7 +78,7 @@ class TrainServiceImpl(TrainService):
 
         self.__train_repository.train(trainer)
         self.__train_repository.save_model(model, save_path)
-        
+
         if to_hub:
             self.__train_repository.model_to_huggingface(model, model_id)
             self.__train_repository.tokenizer_to_huggingface(model, model_id)
