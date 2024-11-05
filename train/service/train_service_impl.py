@@ -1,3 +1,5 @@
+from typing import Optional
+
 from peft import get_peft_model
 
 from dataset.repository.dataset_repository_impl import DatasetRepositoryImpl
@@ -30,13 +32,15 @@ class TrainServiceImpl(TrainService):
 
         return cls.__instance
 
-    def sft(self, save_path):
+    def sft(self, save_path, model_id: Optional[str] = None, dataset_id: Optional[str] = None, to_hub: bool = False):
         quantize_config = self.__train_repository.get_quantization_config(
             QuantizeArgs()
         )
 
+        model_id = model_id if model_id else self.MODEL_ID
+        dataset_id = dataset_id if dataset_id else self.DATASET_ID
         model = self.__train_repository.load_model(
-            self.MODEL_ID, ModelCofig(), quantize_config
+            model_id, ModelCofig(), quantize_config
         )
         tokenizer = self.__train_repository.load_tokenizer(self.MODEL_ID)
 
@@ -46,11 +50,9 @@ class TrainServiceImpl(TrainService):
         model = get_peft_model(model, lora_config)
         model.print_trainable_parameters()
 
-        dataset = self.__dataset_repository.load_dataset(self.DATASET_ID, tokenizer)
+        dataset = self.__dataset_repository.load_dataset(dataset_id, tokenizer)
         train_dataset = dataset
         eval_dataset = dataset
-        # train_dataset = dataset
-        # eval_dataset = None
         data_collator = self.__dataset_repository.get_data_collator(tokenizer)
 
         # TODO
@@ -69,5 +71,7 @@ class TrainServiceImpl(TrainService):
 
         self.__train_repository.train(trainer)
         self.__train_repository.save_model(model, save_path)
-        # self.__train_repository.model_to_huggingface(model, model_id)
-        # self.__train_repository.tokenizer_to_huggingface(model, model_id)
+        
+        if to_hub:
+            self.__train_repository.model_to_huggingface(model, model_id)
+            self.__train_repository.tokenizer_to_huggingface(model, model_id)
