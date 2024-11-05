@@ -1,3 +1,4 @@
+import os
 import subprocess
 from glob import glob
 
@@ -43,7 +44,7 @@ class ToOllamaRepositoryImpl(ToOllamaRepository):
 
     def to_gguf(self, model_path):
         subprocess.Popen(
-            f"python to_ollama/entity/llama_cpp/convert_hf_to_gguf.py {model_path}",
+            f"export PYTHONPATH={os.path.join(os.path.abspath(__file__), '..', '..', '..')};python -m to_ollama.entity.llama_cpp.convert_hf_to_gguf {model_path}",
             shell=True,
         ).wait()
 
